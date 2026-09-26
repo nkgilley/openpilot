@@ -31,9 +31,9 @@ class DRIVER_MONITOR_SETTINGS:
     self._WHEELTOUCH_POLICY_ALERT_1_TIMEOUT = 5.
     self._WHEELTOUCH_POLICY_ALERT_2_TIMEOUT = 15.
     self._WHEELTOUCH_POLICY_ALERT_3_TIMEOUT = 25.
-    self._VISION_POLICY_ALERT_1_TIMEOUT = 5.
-    self._VISION_POLICY_ALERT_2_TIMEOUT = 8.
-    self._VISION_POLICY_ALERT_3_TIMEOUT = 13.
+    self._VISION_POLICY_ALERT_1_TIMEOUT = 7.
+    self._VISION_POLICY_ALERT_2_TIMEOUT = 12.
+    self._VISION_POLICY_ALERT_3_TIMEOUT = 17.
 
     # no response = alert_3 sustained for certain amount of time
     self._NO_RESPONSE_TIMEOUT = 5.
@@ -51,8 +51,8 @@ class DRIVER_MONITOR_SETTINGS:
     self._SG_THRESHOLD = 0.9
     self._BLINK_THRESHOLD = 0.865
     self._PHONE_THRESH = 0.5
-    self._POSE_PITCH_THRESHOLD = 0.3133
-    self._POSE_PITCH_THRESHOLD_SLACK = 0.3237
+    self._POSE_PITCH_THRESHOLD = 0.3800
+    self._POSE_PITCH_THRESHOLD_SLACK = 0.4100
     self._POSE_PITCH_THRESHOLD_STRICT = self._POSE_PITCH_THRESHOLD
     self._POSE_YAW_THRESHOLD = 0.4020
     self._POSE_YAW_THRESHOLD_SLACK = 0.5042
@@ -75,7 +75,7 @@ class DRIVER_MONITOR_SETTINGS:
     self._DCAM_UNCERTAIN_RESET_COUNT = int(2  / DT_DMON)
     self._HI_STD_THRESHOLD = 0.3
     self._HI_STD_FALLBACK_TIME = int(10  / DT_DMON)  # fall back to wheel touch if model is uncertain for 10s
-    self._DISTRACTED_FILTER_TS = 0.25  # 0.6Hz
+    self._DISTRACTED_FILTER_TS = 0.50  # smoother response to brief downward glances
 
     self._POSE_CALIB_MIN_SPEED = 13  # 30 mph
     self._POSE_OFFSET_MIN_COUNT = int(60 / DT_DMON)  # valid data counts before calibration completes, 1min cumulative
