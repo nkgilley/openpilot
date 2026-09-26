@@ -1,5 +1,49 @@
 ![](https://user-images.githubusercontent.com/47793918/233812617-beab2e71-57b9-479e-8bff-c3931347ca40.png)
 
+## 🚙 Relaxed Driver Monitoring Fork
+
+This fork modifies driver monitoring (DM) to reduce false-positive alerts and prevent intrusive alarms when glancing down at the instrument cluster, navigation screen, or center console for a few seconds.
+
+### 🎯 Key Changes
+1. **Silenced Stage 1 Alert (`driverDistracted1`)**:
+   - Reverted from `AudibleAlert.preAlert` back to `AudibleAlert.none`.
+   - Stage 1 is visual-only ("Pay Attention" prompt) without any sound.
+2. **Relaxed Pitch Downward Threshold**:
+   - `_POSE_PITCH_THRESHOLD`: `0.3133` (~17.9°) ➔ `0.3800` (~21.8°, slack up to ~23.5°).
+   - Downward head tilt when checking speedometer or navigation no longer triggers an immediate distracted pose flag.
+3. **Smoother Distraction Filter**:
+   - `_DISTRACTED_FILTER_TS`: `0.25`s ➔ `0.50`s so quick downward glances do not instantly deplete awareness.
+4. **Extended Vision Policy Timeouts**:
+   - Stage 1 Timeout: `3.0`s (or `5.0`s) ➔ **`7.0`s** (silent buffer before visual prompt).
+   - Stage 2 Timeout: `5.0`s (or `8.0`s) ➔ **`12.0`s** (audible alarm delayed until 12s of continuous distraction).
+   - Stage 3 Timeout: `11.0`s (or `13.0`s) ➔ **`17.0`s** (terminal alert).
+
+---
+
+### 📦 Installation on Comma 3X
+On your device, go to **Settings ➔ Software ➔ Uninstall Software** and enter:
+```text
+https://installer.comma.ai/nkgilley/relaxed-dm-tizi
+```
+*(This branch is based on `release-tizi` and is pre-compiled, so it boots up instantly without a long on-device compilation step).*
+
+---
+
+### 🔄 Automatic Sync with Upstream
+- **Daily Cloud Sync**: A GitHub Actions workflow ([`.github/workflows/sync-relaxed-dm.yaml`](.github/workflows/sync-relaxed-dm.yaml)) runs daily at `06:00 UTC`.
+- Whenever `sunnypilot/sunnypilot` publishes a new `release-tizi`, the workflow automatically checks it out, re-applies the DM patch, and updates the `relaxed-dm-tizi` branch.
+- Your comma device will automatically receive updates over Wi-Fi.
+- **Manual Trigger**: You can also manually trigger a sync anytime in GitHub under **Actions ➔ "Sync Relaxed DM with Upstream release-tizi" ➔ "Run workflow"**.
+
+---
+
+### 🌿 Branches
+- **`master`** (Default branch): Tracks upstream `master` + holds the GitHub Actions auto-sync workflow.
+- **`relaxed-dm-tizi`**: Prebuilt release branch for Comma 3X with relaxed DM. **(Recommended for installation)**
+- **`relaxed-driver-monitoring`**: Development branch based on `master` with relaxed DM.
+
+---
+
 ## 🌞 What is sunnypilot?
 [sunnypilot](https://github.com/sunnyhaibin/sunnypilot) is a fork of comma.ai's openpilot, an open source driver assistance system. sunnypilot offers the user a unique driving experience for over 300+ supported car makes and models with modified behaviors of driving assist engagements. sunnypilot complies with comma.ai's safety rules as accurately as possible.
 
