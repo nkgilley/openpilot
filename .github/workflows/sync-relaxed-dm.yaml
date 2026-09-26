@@ -1,0 +1,81 @@
+name: Sync Relaxed DM with Upstream release-tizi
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Runs daily at 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force update even if upstream commit has not changed'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  sync-relaxed-dm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch upstream release-tizi
+        run: |
+          git remote add upstream https://github.com/sunnypilot/sunnypilot.git || git remote set-url upstream https://github.com/sunnypilot/sunnypilot.git
+          git fetch upstream release-tizi
+
+      - name: Check if upstream updated
+        id: check_update
+        run: |
+          UPSTREAM_COMMIT=$(git rev-parse upstream/release-tizi)
+          CURRENT_BASE=$(git rev-parse origin/relaxed-dm-tizi~1 2>/dev/null || echo "")
+          echo "Upstream release-tizi commit: $UPSTREAM_COMMIT"
+          echo "Current base commit: $CURRENT_BASE"
+          if [ "$UPSTREAM_COMMIT" = "$CURRENT_BASE" ] && [ "${{ github.event.inputs.force }}" != "true" ]; then
+            echo "Already up-to-date with upstream release-tizi."
+            echo "should_update=false" >> $GITHUB_OUTPUT
+          else
+            echo "Update needed."
+            echo "should_update=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Apply DM changes and push
+        if: steps.check_update.outputs.should_update == 'true'
+        run: |
+          git checkout -B relaxed-dm-tizi upstream/release-tizi
+          python3 -c '
+          path = "selfdrive/monitoring/policy.py"
+          with open(path, "r") as f:
+              c = f.read()
+
+          replacements = [
+              ("self._VISION_POLICY_ALERT_1_TIMEOUT = 3.", "self._VISION_POLICY_ALERT_1_TIMEOUT = 7."),
+              ("self._VISION_POLICY_ALERT_2_TIMEOUT = 5.", "self._VISION_POLICY_ALERT_2_TIMEOUT = 12."),
+              ("self._VISION_POLICY_ALERT_3_TIMEOUT = 11.", "self._VISION_POLICY_ALERT_3_TIMEOUT = 17."),
+              ("self._POSE_PITCH_THRESHOLD = 0.3133", "self._POSE_PITCH_THRESHOLD = 0.3800"),
+              ("self._POSE_PITCH_THRESHOLD_SLACK = 0.3237", "self._POSE_PITCH_THRESHOLD_SLACK = 0.4100"),
+              ("self._DISTRACTED_FILTER_TS = 0.25", "self._DISTRACTED_FILTER_TS = 0.50"),
+          ]
+
+          for old, new in replacements:
+              if old in c:
+                  c = c.replace(old, new)
+              else:
+                  print(f"Warning: pattern not found: {old}")
+
+          with open(path, "w") as f:
+              f.write(c)
+          '
+          git add selfdrive/monitoring/policy.py
+          git commit -m "DM: relax driver monitoring strictness for comma 3X (release-tizi)"
+          git push --force origin relaxed-dm-tizi
