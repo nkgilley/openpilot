@@ -20,26 +20,35 @@ This fork modifies driver monitoring (DM) to reduce false-positive alerts and pr
 
 ---
 
-### 📦 Installation on Comma 3X
-On your device, go to **Settings ➔ Software ➔ Uninstall Software** and enter:
+### 📦 Installation
+
+On your device, go to **Settings ➔ Software ➔ Uninstall Software** and enter the URL for your hardware:
+
+#### 🚗 Comma 3X
 ```text
 https://installer.comma.ai/nkgilley/relaxed-dm-tizi
 ```
-*(This branch is based on `release-tizi` and is pre-compiled, so it boots up instantly without a long on-device compilation step).*
+
+#### 🚙 Comma 4
+```text
+https://installer.comma.ai/nkgilley/relaxed-dm-mici
+```
+*(Both branches are based on upstream prebuilt releases—`release-tizi` and `release-mici`—so they boot up in under 30 seconds without needing on-device compilation).*
 
 ---
 
 ### 🔄 Automatic Sync with Upstream
 - **Daily Cloud Sync**: A GitHub Actions workflow ([`.github/workflows/sync-relaxed-dm.yaml`](.github/workflows/sync-relaxed-dm.yaml)) runs daily at `06:00 UTC`.
-- Whenever `sunnypilot/sunnypilot` publishes a new `release-tizi`, the workflow automatically checks it out, re-applies the DM patch, and updates the `relaxed-dm-tizi` branch.
+- It tracks both `release-tizi` (Comma 3X) and `release-mici` (Comma 4). Whenever upstream updates either release, the workflow automatically re-applies the DM patch and updates the respective branch.
 - Your comma device will automatically receive updates over Wi-Fi.
-- **Manual Trigger**: You can also manually trigger a sync anytime in GitHub under **Actions ➔ "Sync Relaxed DM with Upstream release-tizi" ➔ "Run workflow"**.
+- **Manual Trigger**: You can also manually trigger a sync anytime in GitHub under **Actions ➔ "Sync Relaxed DM with Upstream (Comma 3X & Comma 4)" ➔ "Run workflow"**.
 
 ---
 
 ### 🌿 Branches
 - **`master`** (Default branch): Tracks upstream `master` + holds the GitHub Actions auto-sync workflow.
-- **`relaxed-dm-tizi`**: Prebuilt release branch for Comma 3X with relaxed DM. **(Recommended for installation)**
+- **`relaxed-dm-tizi`**: Prebuilt release branch for **Comma 3X** with relaxed DM.
+- **`relaxed-dm-mici`**: Prebuilt release branch for **Comma 4** with relaxed DM.
 - **`relaxed-driver-monitoring`**: Development branch based on `master` with relaxed DM.
 
 ---

@@ -22,8 +22,8 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    # Skip if PR is in draft mode
-    if: (github.event_name != 'pull_request' || (github.event_name == 'pull_request' && github.event.pull_request.draft == false)) && !github.event.pull_request.head.repo.fork
+    # Skip if not official sunnypilot repository, or if PR is in draft mode
+    if: github.repository == 'sunnypilot/sunnypilot' && (github.event_name != 'pull_request' || (github.event_name == 'pull_request' && github.event.pull_request.draft == false)) && !github.event.pull_request.head.repo.fork
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
