@@ -39,8 +39,8 @@ class DRIVER_MONITOR_SETTINGS:
     self._NO_RESPONSE_TIMEOUT = 5.
 
     # lockout specs
-    self._MAX_ALERT_3 = 2
-    self._MAX_NO_RESPONSE = 1
+    self._MAX_ALERT_3 = 4
+    self._MAX_NO_RESPONSE = 2
     self._LOCKOUT_TIMES = [int(60 * n_min / DT_DMON) for n_min in [1, 5, 15, 30]]
 
     self._TIMEOUT_RECOVERY_FACTOR_MAX = 5.
@@ -50,7 +50,7 @@ class DRIVER_MONITOR_SETTINGS:
     self._EYE_THRESHOLD = 0.65
     self._SG_THRESHOLD = 0.9
     self._BLINK_THRESHOLD = 0.865
-    self._PHONE_THRESH = 0.5
+    self._PHONE_THRESH = 0.65
     self._POSE_PITCH_THRESHOLD = 0.3800
     self._POSE_PITCH_THRESHOLD_SLACK = 0.4100
     self._POSE_PITCH_THRESHOLD_STRICT = self._POSE_PITCH_THRESHOLD
@@ -328,7 +328,7 @@ class DriverMonitoring:
         self.lockout_time_elapsed = 0
 
     always_on_valid = self.always_on and not wrong_gear
-    if (self.driver_interacting and self.awareness > 0 and self.active_policy == MonitoringPolicy.wheeltouch) or \
+    if (self.driver_interacting and self.awareness > 0) or \
        (not always_on_valid and not op_engaged) or \
        (always_on_valid and not op_engaged and self.awareness <= 0):
       # always reset on disengage with normal mode; disengage resets only on red if always on
@@ -338,7 +338,7 @@ class DriverMonitoring:
     awareness_prev = self.awareness
     _reaching_alert_1 = self.awareness - self.step_change <= self.threshold_alert_1
     _reaching_alert_3 = self.awareness - self.step_change <= 0
-    lowspeed_exemption = lowspeed and _reaching_alert_1
+    lowspeed_exemption = lowspeed
     always_on_exemption = always_on_valid and not op_engaged and _reaching_alert_3
 
     if self.awareness > 0 and \
