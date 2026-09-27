@@ -74,6 +74,11 @@ jobs:
               ("self._POSE_PITCH_THRESHOLD = 0.3133", "self._POSE_PITCH_THRESHOLD = 0.3800"),
               ("self._POSE_PITCH_THRESHOLD_SLACK = 0.3237", "self._POSE_PITCH_THRESHOLD_SLACK = 0.4100"),
               ("self._DISTRACTED_FILTER_TS = 0.25", "self._DISTRACTED_FILTER_TS = 0.50"),
+              ("self._PHONE_THRESH = 0.5", "self._PHONE_THRESH = 0.65"),
+              ("self._MAX_TERMINAL_ALERTS = 3", "self._MAX_TERMINAL_ALERTS = 5"),
+              ("self._MAX_TERMINAL_DURATION = int(30 / DT_DMON)", "self._MAX_TERMINAL_DURATION = int(60 / DT_DMON)"),
+              ("standstill_exemption = standstill and _reaching_alert_1", "standstill_exemption = standstill"),
+              ("if (self.driver_interacting and self.awareness > 0 and self.active_policy == MonitoringPolicy.wheeltouch)", "if (self.driver_interacting and self.awareness > 0)"),
           ]
 
           for old, new in replacements:

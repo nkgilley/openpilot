@@ -17,6 +17,14 @@ This fork modifies driver monitoring (DM) to reduce false-positive alerts and pr
    - Stage 1 Timeout: `3.0`s (or `5.0`s) ➔ **`7.0`s** (silent buffer before visual prompt).
    - Stage 2 Timeout: `5.0`s (or `8.0`s) ➔ **`12.0`s** (audible alarm delayed until 12s of continuous distraction).
    - Stage 3 Timeout: `11.0`s (or `13.0`s) ➔ **`17.0`s** (terminal alert).
+5. **Relaxed Phone Detection Sensitivity**:
+   - `_PHONE_THRESH`: `0.50` ➔ `0.65` (drastically cuts false alarms from drinking bottles, holding items, or resting hands near the chest/wheel).
+6. **Traffic Light & Standstill Exemption**:
+   - Awareness countdown is completely frozen at a stop (`standstill`) and recovers naturally so you aren't nagged while waiting at red lights.
+7. **Steering Wheel Nudge Reset**:
+   - Nudging the steering wheel immediately acknowledges the system and resets awareness to 100% under vision monitoring, letting you dismiss warnings with a gentle wheel touch.
+8. **Expanded Lockout Buffer**:
+   - Terminal alerts: `3` ➔ `5` strikes; terminal duration: `30`s ➔ `60`s before triggering a lockout disengagement.
 
 ---
 
